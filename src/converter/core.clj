@@ -3,7 +3,8 @@
         [hiccup.core :only [html]]
         [hiccup.page :only [html5]])
   (:require [clojure.string :as s])
-  (:import java.io.File))
+  (:import java.io.File)
+  (:gen-class))
 
 (defn files-list
   []
@@ -11,7 +12,7 @@
 
 (defn extract-page-tree
   [filename]
-  (:content (first (:content (parse filename)))))
+  (:content (parse filename)))
 
 (defn vectorize
   [{:keys [tag attrs content] :as el}]
@@ -31,4 +32,6 @@
 (defn -main
   "I don't do a whole lot."
   [& args]
-  (println "Hello, World!"))
+  (map #(do (println "Converting " (.getName %) "...")
+            (spit (str % ".html") (convert-to-html %)))
+       (files-list)))
